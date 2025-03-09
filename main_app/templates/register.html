@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}ثبت نام{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+
+    <h2 class="mb-4">ثبت نام</h2>
+    <form method="POST" class="card card-body">
+      {% csrf_token %}
+
+      <!-- انتخاب نقش -->
+      <div class="mb-3">
+        <label for="id_role" class="form-label">
+          نقش کاربر <span style="color:red">*</span>
+        </label>
+        {{ form.role }}
+      </div>
+
+      <!-- بخش مخصوص دانشجو: شماره دانشجویی و سال پذیرش -->
+      <div id="student-fields">
+        <div class="mb-3">
+          <label for="id_studentNumber" class="form-label">
+            شماره دانشجویی <span style="color:red">*</span>
+          </label>
+          {{ form.studentNumber }}
+        </div>
+
+        <div class="mb-3">
+          <label for="id_admissionYear" class="form-label">
+            سال پذیرش <span style="color:red">*</span>
+          </label>
+          {{ form.admissionYear }}
+        </div>
+      </div>
+
+      <!-- نام کاربری -->
+      <div id="username-field">
+        <div class="mb-3">
+          <label for="id_username" class="form-label">
+            نام کاربری <span style="color:red">*</span>
+          </label>
+          {{ form.username }}
+        </div>
+      </div>
+
+      <!-- رمز عبور -->
+      <div class="mb-3">
+        <label for="id_password" class="form-label">
+          رمز عبور <span style="color:red">*</span>
+        </label>
+        {{ form.password }}
+      </div>
+
+      <!-- ایمیل -->
+      <div class="mb-3">
+        <label for="id_email" class="form-label">
+          ایمیل <span style="color:red">*</span>
+        </label>
+        {{ form.email }}
+      </div>
+
+      <!-- نام -->
+      <div class="mb-3">
+        <label for="id_firstName" class="form-label">
+          نام <span style="color:red">*</span>
+        </label>
+        {{ form.firstName }}
+      </div>
+
+      <!-- نام خانوادگی -->
+      <div class="mb-3">
+        <label for="id_lastName" class="form-label">
+          نام خانوادگی <span style="color:red">*</span>
+        </label>
+        {{ form.lastName }}
+      </div>
+
+      <!-- کد ملی (اختیاری) -->
+      <div class="mb-3">
+        <label for="id_nationalID" class="form-label">
+          کد ملی
+        </label>
+        {{ form.nationalID }}
+      </div>
+
+      <button type="submit" class="btn btn-primary">ثبت نام</button>
+    </form>
+  </div>
+</div>
+
+<!-- جاوااسکریپت برای مخفی کردن فیلدهای دانشجو اگر نقش=ادمین باشد -->
+<script>
+function toggleStudentFields() {
+  const roleSelect = document.getElementById("id_role");
+  const studentFieldsDiv = document.getElementById("student-fields");
+  const adminFieldDiv = document.getElementById("username-field");
+  const usernameField = document.getElementById("id_username");
+  const studentNumberField = document.getElementById("id_studentNumber");
+
+  if (roleSelect.value === "student") {
+    studentFieldsDiv.style.display = "block";
+    adminFieldDiv.style.display = "none";
+    // کپی مقدار studentNumber به username
+    if (studentNumberField && usernameField) {
+      usernameField.value = studentNumberField.value;
+    }
+  } else {
+    // نقش ادمین
+    studentFieldsDiv.style.display = "none";
+    adminFieldDiv.style.display = "block";
+  }
+}
+
+// به‌روزرسانی خودکار فیلد username وقتی مقدار studentNumber تغییر می‌کند (در حالت دانشجو)
+document.addEventListener("DOMContentLoaded", () => {
+  const roleSelect = document.getElementById("id_role");
+  roleSelect.addEventListener("change", toggleStudentFields);
+  toggleStudentFields();
+
+  const studentNumberField = document.getElementById("id_studentNumber");
+  if (studentNumberField) {
+    studentNumberField.addEventListener("input", function() {
+      const roleSelect = document.getElementById("id_role");
+      if (roleSelect.value === "student") {
+        const usernameField = document.getElementById("id_username");
+        if (usernameField) {
+          usernameField.value = this.value;
+        }
+      }
+    });
+  }
+});
+</script>
+{% endblock %}

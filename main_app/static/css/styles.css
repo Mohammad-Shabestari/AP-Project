@@ -1,0 +1,44 @@
+
+@import url("https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/font-face.css");
+
+body {
+  font-family: "Vazir", sans-serif !important;
+  background-color: #f8f9fa;
+}
+
+.navbar-brand {
+  font-weight: 600;
+  font-size: 1.2rem;
+}
+
+/* اصلاح حاشیه و فاصله برای منوها در حالت rtl */
+.navbar-nav .nav-link {
+  margin: 0 0.5rem;
+}
+
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+/* جدول‌های ما */
+.table th, .table td {
+  vertical-align: middle;
+}
+
+/* برای کارت درس */
+.course-card {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.course-card:hover {
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+/* استایل دلخواه برای عنوان‌ها */
+h2, h3, h4 {
+  margin-top: 1.5rem;
+}

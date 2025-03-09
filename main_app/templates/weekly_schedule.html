@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block title %}برنامه هفتگی (rowspan){% endblock %}
+
+{% block content %}
+<h2 class="mb-4 text-center">برنامه هفتگی</h2>
+<!-- اینجا ارتفاع پدر را محدود کرده‌ایم تا کل جدول کوتاه‌تر شود -->
+<div class="table-responsive" style="max-height: 600px; overflow-y: auto;">
+  <table class="table table-bordered schedule-table">
+    <thead>
+      <tr>
+        <th>زمان</th>
+        {% for d in days %}
+          <th>{{ d }}</th>
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in table_rows %}
+      <tr>
+        <!-- ستون زمان -->
+        <td class="time-slot">
+          {{ row.time }}
+        </td>
+
+        {% for cell in row.cells %}
+          {% if cell.type == "skip" %}
+            <!-- هیچ <td> چاپ نکنید چون سطر بالا colspan یا rowspan دارد -->
+
+          {% elif cell.type == "empty" %}
+            <td class="schedule-slot"></td>
+
+          {% elif cell.type == "course" %}
+            <!-- خود td را نارنجی کنید: -->
+            <td class="course-slot" rowspan="{{ cell.rowspan }}">
+              <strong>{{ cell.course.courseName }}</strong><br>
+              {{ cell.course.startTime }} - {{ cell.course.endTime }}<br>
+              {{ cell.course.instructor }}
+            </td>
+          {% endif %}
+        {% endfor %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<style>
+  /* جدول را کمی جمع‌وجورتر: */
+  .schedule-table {
+    width: auto;       /* عرض خودکار، بسته به محتوا */
+    margin: 0 auto;    /* وسط‌چین افقی */
+    text-align: center;
+    border-collapse: collapse;
+  }
+
+  .time-slot {
+    background-color: #f8f9fa;
+    font-weight: bold;
+    width: 60px; /* عرض ستون ساعت */
+    white-space: nowrap;
+  }
+
+  .schedule-slot {
+    height: 40px;  /* دلخواه */
+  }
+
+  /* سلول‌هایی که درس دارند: رنگ نارنجی یکپارچه */
+  .course-slot {
+    background-color: #ff7043 !important;
+    color: white;
+    text-align: center;
+    vertical-align: middle;
+    padding: 8px;
+    font-size: 0.9rem;
+    /* اگر می‌خواهید گوشه‌ها گرد باشند: */
+    border-radius: 5px;
+  }
+</style>
+{% endblock %}

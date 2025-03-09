@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}صفحه اصلی{% endblock %}
+
+{% block content %}
+  <div class="text-center my-5">
+    <h1>به سامانه انتخاب واحد شریف خوش آمدید</h1>
+    <p>طراحی شده با جنگو</p>
+    {% if not user.is_authenticated %}
+      <a href="{% url 'login' %}" class="btn btn-primary btn-lg">وارد شوید</a>
+      <a href="{% url 'register' %}" class="btn btn-success btn-lg">ثبت نام</a>
+    {% else %}
+      <a href="{% url 'courses_list' %}" class="btn btn-primary btn-lg">مشاهده دروس</a>
+    {% endif %}
+  </div>
+{% endblock %}

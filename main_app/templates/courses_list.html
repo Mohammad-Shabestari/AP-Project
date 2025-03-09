@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+
+{% block title %}لیست دروس{% endblock %}
+
+{% block content %}
+  <h2 class="mb-4">دروس</h2>
+
+  <!-- فرم فیلتر دانشکده -->
+  <form method="GET" id="departmentFilterForm" class="mb-3">
+    <select name="department" class="form-control" onchange="this.form.submit();">
+      <option value="">همه دانشکده‌ها</option>
+      {% for dept in departments %}
+        <option value="{{ dept.departmentID }}" {% if selected_department == dept.departmentID|stringformat:"s" %}selected{% endif %}>
+          {{ dept.departmentName }}
+        </option>
+      {% endfor %}
+    </select>
+  </form>
+
+  <!-- فیلتر جستجو -->
+  <div class="mb-3">
+    <input
+      type="text"
+      id="courseSearch"
+      onkeyup="filterCourses()"
+      class="form-control"
+      placeholder="جستجوی درس با اسم درس، کد درس و ..."
+    >
+  </div>
+
+  <!-- نمایش تعداد واحدهای انتخاب‌شده و حداکثر واحد مجاز -->
+  {% if max_units %}
+  <div class="mb-3">
+    <p>
+      تعداد واحدهای انتخاب‌شده: <strong>{{ total_credits }}</strong> | سقف تعداد واحدهای شما :  <strong>{{ max_units }}</strong>
+    </p>
+  </div>
+  {% endif %}
+
+  <table class="table" id="coursesTable">
+    <thead class="table-light">
+      <tr>
+        <th>اسم درس</th>
+        <th>کد درس</th>
+        <th>واحد</th>
+        <th>روزها</th>
+        <th>ساعت کلاس</th>
+        <th>تاریخ امتحان</th>
+        <th>استاد درس</th>
+        <th>ظرفیت درس</th>
+        <th>اقدامات</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for course in courses %}
+      <tr>
+        <td>{{ course.courseName }}</td>
+        <td>{{ course.courseCode }}</td>
+        <td>{{ course.credits }}</td>
+        <td>{{ course.classDays|join:", " }}</td>
+        <td>{{ course.startTime }} - {{ course.endTime }}</td>
+        <td>{{ course.examTime|shamsi_exam_time }}</td>
+        <td>{{ course.instructor }}</td>
+        <td>{{ course.remainingCapacity }}/{{ course.capacity }}</td>
+        <td>
+          {% if course.courseID in enrolled_course_ids %}
+            <!-- دکمه حذف -->
+            <form method="POST" style="display:inline;">
+              {% csrf_token %}
+              <input type="hidden" name="course_id" value="{{ course.courseID }}">
+              <input type="hidden" name="action" value="remove">
+              <button type="submit" class="btn btn-danger btn-sm">حذف</button>
+            </form>
+          {% else %}
+            <!-- دکمه افزودن -->
+            <form method="POST" style="display:inline;">
+              {% csrf_token %}
+              <input type="hidden" name="course_id" value="{{ course.courseID }}">
+              <input type="hidden" name="action" value="add">
+              <button type="submit" class="btn btn-primary btn-sm">اضافه</button>
+            </form>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

@@ -1,0 +1,53 @@
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark" dir="rtl">
+  <div class="container-fluid">
+    <!-- عنوان سایت -->
+    <a class="navbar-brand" href="{% url 'home' %}">سامانه انتخاب واحد</a>
+
+    <!-- دکمه برای حالت موبایل -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- منو -->
+    <div class="collapse navbar-collapse justify-content-end" id="mainNavbar">
+      <ul class="navbar-nav mb-2 mb-lg-0">
+
+        <!-- اگر کاربر وارد نشده باشد -->
+        {% if not user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'login' %}">ورود</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'register' %}">ثبت‌نام</a>
+          </li>
+
+        <!-- اگر کاربر وارد شده باشد -->
+        {% else %}
+          {% if not user.is_staff %}
+            <li class="nav-item">
+            <a class="nav-link" href="{% url 'courses_list' %}">لیست دروس</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'weekly_schedule' %}">برنامه هفتگی</a>
+            </li>
+          {% endif %}
+          <!-- اگر ادمین یا استاف باشد -->
+          {% if user.is_staff %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'admin_courses' %}">مدیریت دروس</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'admin_users' %}">مدیریت کاربران</a>
+            </li>
+          {% endif %}
+
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'logout' %}">خروج</a>
+          </li>
+        {% endif %}
+
+      </ul>
+    </div>
+  </div>
+</nav>

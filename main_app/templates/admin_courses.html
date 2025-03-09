@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+
+{% block title %} صفحه مدیریت دروس {% endblock %}
+
+{% block extra_css %}
+  <!-- بارگذاری CSS تقویم فارسی از jsDelivr (نسخه به‌روز) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/persian-datepicker@1.2.0/dist/css/persian-datepicker.min.css">
+{% endblock %}
+
+{% block content %}
+  <h2 class="mb-3"> صفحه مدیریت دروس </h2>
+
+  <div class="row">
+    <!-- فرم ساخت/ویرایش درس جدید -->
+    <div class="col-md-4">
+      <div class="card mb-3">
+        <div class="card-header">ساخت / ویرایش درس</div>
+        <div class="card-body">
+          <form method="POST">
+            {% csrf_token %}
+
+            {{ form.as_p }}
+            <button type="submit" name="create_course" class="btn btn-success">ذخیره درس</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- لیست دروس موجود -->
+    <!-- لیست دروس موجود -->
+  <div class="col-md-8">
+    <h4>لیست دروس</h4>
+
+    <!-- نوار جستجو -->
+    <form method="GET" class="mb-3">
+      <div class="input-group">
+        <input type="text"
+               name="search"
+               value="{{ request.GET.search|default_if_none:'' }}"
+               class="form-control"
+               placeholder="جستجو بر اساس کد درس، نام درس یا نام دانشکده...">
+        <button class="btn btn-primary" type="submit">جستجو</button>
+      </div>
+    </form>
+
+    <!-- کنترل‌های فیلتر -->
+    <div class="mb-3">
+      <a href="?filter=full" class="btn {% if current_filter == 'full' %}btn-secondary active{% else %}btn-outline-secondary{% endif %}">
+        دروس تکمیل شده
+      </a>
+      <a href="?filter=empty" class="btn {% if current_filter == 'empty' %}btn-secondary active{% else %}btn-outline-secondary{% endif %}">
+        دروس با ظرفیت خالی
+      </a>
+      <a href="?" class="btn {% if not current_filter %}btn-secondary active{% else %}btn-outline-secondary{% endif %}">
+        همه دروس
+      </a>
+    </div>
+
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>اسم درس</th>
+          <th>کد درس</th>
+          <th>نام استاد</th>
+          <th>دانشکده</th>
+          <th>ظرفیت</th>
+          <th>ظرفیت باقی مانده</th>
+          <th>اقدامات</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in courses %}
+        <tr>
+          <td>{{ c.courseName }}</td>
+          <td>{{ c.courseCode }}</td>
+
+          <td>
+            {{ c.instructor.firstName }} {{ c.instructor.lastName }}
+          </td>
+
+          <td>{{ c.department.departmentName }}</td>
+
+          <td>{{ c.capacity }}</td>
+          <td>{{ c.remainingCapacity }}</td>
+          <td>
+            <button type="button" class="btn btn-info btn-sm"
+              onclick="populateCourseForm(
+                {{ c.courseID }},
+                '{{ c.courseName }}',
+                '{{ c.courseCode }}',
+                '{{ c.credits }}',
+                '{{ c.capacity }}',
+                '{{ c.remainingCapacity }}',
+                '{{ c.department_id }}',
+                '{{ c.instructor_id }}',
+                '{{ c.classDays|join:"," }}',
+                '{{ c.startTime }}',
+                '{{ c.endTime }}',
+                '{{ c.examTime|date:'Y-m-d H:i' }}',
+                '{{ c.get_co_course_code }}'
+              )">
+              ویرایش
+            </button>
+            <button type="button" class="btn btn-danger btn-sm" onclick="confirmCourseDelete({{ c.courseID }})">
+              حذف
+            </button>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}
+
+{% block extra_js %}
+  <!-- بارگذاری jQuery از CDN رسمی -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <!-- بارگذاری کتابخانه persian-date -->
+  <script src="https://cdn.jsdelivr.net/npm/persian-date@1.1.0/dist/persian-date.min.js"></script>
+  <!-- بارگذاری پلاگین persian-datepicker -->
+  <script src="https://cdn.jsdelivr.net/npm/persian-datepicker@1.2.0/dist/js/persian-datepicker.min.js"></script>
+
+  <script>
+    $(document).ready(function() {
+      if ($("#examTimePicker").length) {
+        $("#examTimePicker").persianDatepicker({
+          format: "YYYY-MM-DD HH:mm",
+          timePicker: {
+            enabled: true
+          }
+        });
+      }
+    });
+  </script>
+{% endblock %}
