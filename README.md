@@ -1,4 +1,4 @@
-# Course Registration and Weekly Schedule Management System – Academic Project
+# University Course Registration and Academic Course Management System – Academic Project
 
 This repository contains the implementation of a comprehensive course registration and weekly schedule management system developed as a project for the Advanced Programming course at Sharif University of Technology. The project is built using the Django framework and offers the following features:
 
